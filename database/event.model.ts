@@ -144,10 +144,14 @@ function generateSlug(title: string): string {
 function normalizeDate(dateString: string): string {
   const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (isoDateRegex.test(dateString)) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [year, month, day] = dateString.split("-").map(Number);
-    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-      return dateString;
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() + 1 === month &&
+      date.getUTCDate() === day
+    ) {
+      return date.toISOString().split("T")[0];
     }
   }
 
