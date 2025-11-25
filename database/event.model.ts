@@ -141,14 +141,20 @@ function generateSlug(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// Normalize date to YYYY-MM-DD
 function normalizeDate(dateString: string): string {
-  const date = new Date(dateString);
-
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date format");
+  const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (isoDateRegex.test(dateString)) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [year, month, day] = dateString.split("-").map(Number);
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      return dateString;
+    }
   }
 
+  const date = new Date(dateString + "T00:00:00Z");
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date format. Use YYYY-MM-DD");
+  }
   return date.toISOString().split("T")[0];
 }
 
